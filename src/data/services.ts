@@ -1,12 +1,45 @@
-import type { Service } from '../types'
+import type {ApiService, Service} from '../types'
 
-export const services: Service[] = [
-  { id: 'silk-press', name: 'Silk Press', category: 'Hair', description: 'A smooth, bouncy finish with deep-conditioning care.', duration: 90, price: 85, accent: 'rose' },
-  { id: 'signature-cut', name: 'Signature Cut', category: 'Hair', description: 'A tailored cut and style designed around you.', duration: 60, price: 65, accent: 'plum' },
-  { id: 'gel-manicure', name: 'Gel Manicure', category: 'Nails', description: 'A flawless, long-wear manicure with cuticle care.', duration: 50, price: 45, accent: 'honey' },
-  { id: 'soft-glam', name: 'Soft Glam', category: 'Skin', description: 'A radiant, camera-ready makeup application.', duration: 75, price: 95, accent: 'lavender' },
-  { id: 'classic-set', name: 'Classic Lash Set', category: 'Lashes', description: 'Natural-looking extensions for effortless definition.', duration: 120, price: 110, accent: 'sage' },
-  { id: 'hydration-facial', name: 'Hydration Facial', category: 'Skin', description: 'A restorative facial for a fresh, dewy glow.', duration: 60, price: 80, accent: 'sky' },
-]
+const API_URL = import.meta.env.VITE_SERVICES_API_URL ?? 'https://server.morellijoseph.com/api/admin/lux/services'
 
-export const categories = ['All', 'Hair', 'Nails', 'Skin', 'Lashes'] as const
+const categoryById: Record<number, string> = {
+    1: 'Lashes',
+    2: 'Brows',
+    3: 'Waxing',
+    4: 'Locs',
+    5: 'Hair',
+    6: 'Twists',
+}
+
+const accentByCategory: Record<string, string> = {
+    Lashes: 'rose',
+    Brows: 'plum',
+    Waxing: 'honey',
+    Locs: 'lavender',
+    Hair: 'sage',
+    Twists: 'sky',
+}
+
+function mapApiService(apiService: ApiService): Service {
+    const category = categoryById[apiService.category_id] ?? 'Other'
+    return {
+        id: apiService.id,
+        name: apiService.name,
+        category,
+        description: apiService.description,
+        duration: apiService.duration_minutes,
+        price: apiService.price,
+        accent: accentByCategory[category] ?? 'rose',
+    }
+}
+
+export async function fetchServices(): Promise<Service[]> {
+    const response = await fetch(API_URL)
+    if (!response.ok) {
+        throw new Error(`Failed to load services: ${response.status} ${response.statusText}`)
+    }
+    const data = (await response.json()) as ApiService[]
+    return data.filter((service) => service.is_active).map(mapApiService)
+}
+
+export const categories = ['All', ...new Set(Object.values(categoryById))] as const
