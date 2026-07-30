@@ -1,6 +1,5 @@
 import {useEffect, useMemo, useState} from 'react'
 import {Link, Route, Routes, useLocation, useNavigate} from 'react-router-dom'
-import {BookingPanel} from './components/BookingPanel'
 import {Checkout} from './components/Checkout'
 import {ServiceCard} from './components/ServiceCard'
 import {categories, fetchServices} from './data/services'
@@ -24,58 +23,45 @@ const galleryImages = [
     {src: tools, alt: 'Lash artist holding application tools'}
 ]
 
-type HomeProps = { services: Service[]; onAddToCart: (service: Service) => void }
+type HomeProps = { services: Service[]; onAddToCart: (service: Service) => void; onBookNow: (service: Service) => void }
 
-function Home({services, onAddToCart}: HomeProps) {
+function Home({services, onAddToCart, onBookNow}: HomeProps) {
     const [activeCategory, setActiveCategory] = useState<(typeof categories)[number]>('All')
-    const [selectedService, setSelectedService] = useState<Service | null>(null)
-    const [bookings, setBookings] = useState<Booking[]>([])
-    const navigate = useNavigate()
     const displayServices = useMemo(() => activeCategory === 'All' ? services : services.filter((service) => service.category === activeCategory), [activeCategory, services])
 
-    function saveBooking(details: Omit<Booking, 'id' | 'service'>) {
-        if (!selectedService) return
-        setBookings((current) => [{id: crypto.randomUUID(), service: selectedService, ...details}, ...current])
-        setSelectedService(null)
-        navigate('/appointments')
-    }
-
-    return <>
-        <main>
-            <section className="hero" id="home">
-                <div className="hero__copy"><p className="eyebrow">Beauty, your way</p><h1>Feel like
-                    your <em>finest</em> self.</h1>
-                    <p className="hero__description">Thoughtful beauty services, personalised to how you want to feel
-                        when you walk out the door.</p>
-                    <button className="primary-button"
-                            onClick={() => document.querySelector('#services')?.scrollIntoView({behavior: 'smooth'})}>Explore
-                        services <span>&rarr;</span></button>
-                </div>
-                <div className="hero__portrait"><img src={frontPose}
-                                                     alt="LuxxBeeBeauty lash artist holding pink lash tools"/>
-                    <span>Made with intention</span></div>
-            </section>
-            <section className="services-section" id="services">
-                <div className="section-heading">
-                    <div><h2>Services</h2></div>
-                    <div className="category-tabs">{categories.map((category) => <button key={category}
-                                                                                         className={activeCategory === category ? 'active' : ''}
-                                                                                         onClick={() => setActiveCategory(category)}>{category}</button>)}</div>
-                </div>
-                <div className="service-grid">{displayServices.map((service) => <ServiceCard key={service.id}
-                                                                                             service={service}
-                                                                                             onBook={setSelectedService}
-                                                                                             onAddToCart={onAddToCart}/>)}</div>
-            </section>
-            <section className="gallery-section" id="gallery" aria-labelledby="gallery-heading">
-                <h2 id="gallery-heading">Gallery</h2>
-                <div className="gallery-grid">{galleryImages.map(({src, alt}) => <img className="gallery-image"
-                                                                                      src={src} alt={alt} loading="lazy"
-                                                                                      key={src}/>)}</div>
-            </section>
-        </main>
-        <BookingPanel service={selectedService} onClose={() => setSelectedService(null)} onSubmit={saveBooking}/>
-    </>
+    return <main>
+        <section className="hero" id="home">
+            <div className="hero__copy"><p className="eyebrow">Beauty, your way</p><h1>Feel like
+                your <em>finest</em> self.</h1>
+                <p className="hero__description">Thoughtful beauty services, personalised to how you want to feel
+                    when you walk out the door.</p>
+                <button className="primary-button"
+                        onClick={() => document.querySelector('#services')?.scrollIntoView({behavior: 'smooth'})}>Explore
+                    services <span>&rarr;</span></button>
+            </div>
+            <div className="hero__portrait"><img src={frontPose}
+                                                 alt="LuxxBeeBeauty lash artist holding pink lash tools"/>
+                <span>Made with intention</span></div>
+        </section>
+        <section className="services-section" id="services">
+            <div className="section-heading">
+                <div><h2>Services</h2></div>
+                <div className="category-tabs">{categories.map((category) => <button key={category}
+                                                                                     className={activeCategory === category ? 'active' : ''}
+                                                                                     onClick={() => setActiveCategory(category)}>{category}</button>)}</div>
+            </div>
+            <div className="service-grid">{displayServices.map((service) => <ServiceCard key={service.id}
+                                                                                         service={service}
+                                                                                         onBook={onBookNow}
+                                                                                         onAddToCart={onAddToCart}/>)}</div>
+        </section>
+        <section className="gallery-section" id="gallery" aria-labelledby="gallery-heading">
+            <h2 id="gallery-heading">Gallery</h2>
+            <div className="gallery-grid">{galleryImages.map(({src, alt}) => <img className="gallery-image"
+                                                                                  src={src} alt={alt} loading="lazy"
+                                                                                  key={src}/>)}</div>
+        </section>
+    </main>
 }
 
 type CartProps = { items: CartItem[]; onRemove: (serviceId: string) => void; onClear: () => void }
@@ -141,6 +127,7 @@ export default function App() {
     const [error, setError] = useState<string | null>(null)
     const [cartItems, setCartItems] = useState<CartItem[]>([])
     const [paymentSubmitted, setPaymentSubmitted] = useState(false)
+    const navigate = useNavigate()
     const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
 
     useEffect(() => {
@@ -162,14 +149,17 @@ export default function App() {
         }
     }, [])
 
+    function setSingleService(service: Service) {
+        setCartItems([{serviceId: service.id, service, quantity: 1}])
+    }
+
     function addToCart(service: Service) {
-        setCartItems((current) => {
-            const existing = current.find((item) => item.serviceId === service.id)
-            return existing ? current.map((item) => item.serviceId === service.id ? {
-                ...item,
-                quantity: item.quantity + 1
-            } : item) : [...current, {serviceId: service.id, service, quantity: 1}]
-        })
+        setSingleService(service)
+    }
+
+    function bookNow(service: Service) {
+        setSingleService(service)
+        navigate('/cart')
     }
 
     function removeFromCart(serviceId: string) {
@@ -182,7 +172,7 @@ export default function App() {
         <main className="checkout-page"><p className="eyebrow">Error</p><h1>We couldn&apos;t load services.</h1>
             <p>{error}</p></main>
     ) : (
-        <Home services={services} onAddToCart={addToCart}/>
+        <Home services={services} onAddToCart={addToCart} onBookNow={bookNow}/>
     )
 
     return <><Header itemCount={itemCount}/><Routes><Route path="/" element={homeElement}/><Route
