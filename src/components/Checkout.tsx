@@ -86,6 +86,7 @@ export function Checkout({items, onPaymentSubmitted}: Props) {
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
     const minDate = tomorrow.toISOString().split('T')[0]
+    const total = items.reduce((sum, {service, quantity}) => sum + service.price * quantity, 0)
 
     async function submitDetails(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
@@ -111,6 +112,11 @@ export function Checkout({items, onPaymentSubmitted}: Props) {
     if (session) return <main className="checkout-page"><p className="eyebrow">Secure checkout</p><h1>Confirm your <em>booking</em>.</h1><p className="checkout-note">Your appointment is reserved while you complete payment.</p><Elements stripe={stripePromise} options={{clientSecret: session.clientSecret, appearance: {theme: 'stripe'}}}><PaymentForm bookingId={session.bookingId} onPaymentSubmitted={onPaymentSubmitted}/></Elements></main>
 
     return <main className="checkout-page"><p className="eyebrow">Almost there</p><h1>Booking <em>details</em>.</h1>
+        <section className="checkout-summary" aria-label="Selected services">
+            <p className="eyebrow">Your services</p>
+            <ul>{items.map(({service}) => <li key={service.id}><span>{service.name}</span><strong>${service.price}</strong></li>)}</ul>
+            <div><span>Estimated total</span><strong>${total}</strong></div>
+        </section>
         <form className="checkout-form" onSubmit={submitDetails}>
             <label>Date<input required name="date" type="date" min={minDate} defaultValue={minDate}/></label>
             <fieldset><legend>Available times</legend><div className="time-grid">{timeSlots.map((slot) => <button type="button" className={time === slot ? 'selected' : ''} onClick={() => setTime(slot)} key={slot}>{slot}</button>)}</div></fieldset>

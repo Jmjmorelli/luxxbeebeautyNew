@@ -23,9 +23,9 @@ const galleryImages = [
     {src: tools, alt: 'Lash artist holding application tools'}
 ]
 
-type HomeProps = { services: Service[]; onAddToCart: (service: Service) => void; onBookNow: (service: Service) => void }
+type HomeProps = { services: Service[]; cartServiceIds: Set<string>; onAddToCart: (service: Service) => void; onBookNow: (service: Service) => void }
 
-function Home({services, onAddToCart, onBookNow}: HomeProps) {
+function Home({services, cartServiceIds, onAddToCart, onBookNow}: HomeProps) {
     const [activeCategory, setActiveCategory] = useState<(typeof categories)[number]>('All')
     const displayServices = useMemo(() => activeCategory === 'All' ? services : services.filter((service) => service.category === activeCategory), [activeCategory, services])
 
@@ -53,7 +53,8 @@ function Home({services, onAddToCart, onBookNow}: HomeProps) {
             <div className="service-grid">{displayServices.map((service) => <ServiceCard key={service.id}
                                                                                          service={service}
                                                                                          onBook={onBookNow}
-                                                                                         onAddToCart={onAddToCart}/>)}</div>
+                                                                                         onAddToCart={onAddToCart}
+                                                                                         isInCart={cartServiceIds.has(service.id)}/>)}</div>
         </section>
         <section className="gallery-section" id="gallery" aria-labelledby="gallery-heading">
             <h2 id="gallery-heading">Gallery</h2>
@@ -129,6 +130,7 @@ export default function App() {
     const [paymentSubmitted, setPaymentSubmitted] = useState(false)
     const navigate = useNavigate()
     const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
+    const cartServiceIds = useMemo(() => new Set(cartItems.map((item) => item.serviceId)), [cartItems])
 
     useEffect(() => {
         let cancelled = false
@@ -149,17 +151,15 @@ export default function App() {
         }
     }, [])
 
-    function setSingleService(service: Service) {
-        setCartItems([{serviceId: service.id, service, quantity: 1}])
-    }
-
     function addToCart(service: Service) {
-        setSingleService(service)
+        setCartItems((current) => current.some((item) => item.serviceId === service.id)
+            ? current
+            : [...current, {serviceId: service.id, service, quantity: 1}])
     }
 
     function bookNow(service: Service) {
-        setSingleService(service)
-        navigate('/cart')
+        addToCart(service)
+        navigate('/checkout')
     }
 
     function removeFromCart(serviceId: string) {
@@ -172,7 +172,7 @@ export default function App() {
         <main className="checkout-page"><p className="eyebrow">Error</p><h1>We couldn&apos;t load services.</h1>
             <p>{error}</p></main>
     ) : (
-        <Home services={services} onAddToCart={addToCart} onBookNow={bookNow}/>
+        <Home services={services} cartServiceIds={cartServiceIds} onAddToCart={addToCart} onBookNow={bookNow}/>
     )
 
     return <><Header itemCount={itemCount}/><Routes><Route path="/" element={homeElement}/><Route

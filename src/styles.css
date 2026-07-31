@@ -361,6 +361,12 @@ nav a:hover, .nav-active {
     padding-left: .3rem;
 }
 
+.service-card__add-button:disabled {
+    color: #6f5960;
+    cursor: default;
+    opacity: .8;
+}
+
 .quote {
     background: #40202d;
     color: #fff9f2;
@@ -712,6 +718,11 @@ footer small {
 .checkout-form .primary-button { border: 0; text-align: left; }
 .checkout-form .primary-button:disabled { cursor: wait; opacity: .7; }
 .checkout-note { color: #766065; }
+.checkout-summary { max-width: 540px; box-sizing: border-box; margin: 0 0 1rem; padding: 1.2rem 1.5rem; background: #fffaf6; }
+.checkout-summary .eyebrow { margin: 0 0 .7rem; }
+.checkout-summary ul { display: grid; gap: .55rem; padding: 0; margin: 0; list-style: none; }
+.checkout-summary li, .checkout-summary > div { display: flex; justify-content: space-between; gap: 1rem; font-size: .86rem; }
+.checkout-summary > div { margin-top: .85rem; padding-top: .85rem; border-top: 1px solid #eaded6; font-family: 'Playfair Display'; }
 .checkout-error { margin: 0; color: #9c302b; font-size: .85rem; }
 
 @media (max-width: 760px) {
