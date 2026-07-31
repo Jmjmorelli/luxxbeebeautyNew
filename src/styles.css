@@ -546,6 +546,36 @@ footer small {
     margin-bottom: 3rem;
 }
 
+.about-page {
+    min-height: calc(100vh - 86px);
+    background: #f4e7df;
+}
+
+.about-hero {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 5.5rem 7.5vw;
+    display: grid;
+    grid-template-columns: 1fr .85fr;
+    align-items: center;
+    gap: 5rem;
+}
+
+.about-hero h1 {
+    font: 600 clamp(3.2rem, 6vw, 5.9rem)/.96 'Playfair Display', serif;
+    letter-spacing: -.06em;
+    margin: 0;
+}
+
+.about-hero h1 em { color: #b85d59; font-weight: 500; }
+.about-hero__copy > p:not(.eyebrow) { max-width: 500px; color: #725e63; line-height: 1.75; margin: 1.8rem 0 2.2rem; }
+.about-hero__portrait { overflow: hidden; height: 460px; border-radius: 220px 220px 8px 8px; box-shadow: 16px 16px 0 #e6c9bd; }
+.about-hero__portrait img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+.about-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #eaded6; }
+.about-details > div { padding: 2.2rem 7.5vw; background: #fffaf6; }
+.about-details .eyebrow { margin-bottom: .65rem; }
+.about-details a, .about-details address { color: #44212f; font: 500 1.15rem 'Playfair Display', serif; font-style: normal; }
+
 .empty-state {
     text-align: center;
     background: #fffaf6;
@@ -672,6 +702,11 @@ footer small {
     .appointments {
         padding: 4rem 1.5rem;
     }
+
+    .about-hero { padding: 4rem 1.5rem; grid-template-columns: 1fr; gap: 3rem; }
+    .about-hero__portrait { height: 390px; width: min(100%, 330px); }
+    .about-details { grid-template-columns: 1fr; }
+    .about-details > div { padding: 1.5rem; }
 
     footer {
         padding: 2.2rem 1.5rem;

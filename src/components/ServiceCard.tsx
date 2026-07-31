@@ -18,10 +18,12 @@ export function ServiceCard({service, onBook, onAddToCart, isInCart}: Props) {
                 <strong>${service.price}</strong>
                 <div className="service-card__actions">
                     <button className="text-button service-card__add-button" onClick={() => onAddToCart(service)}
-                            disabled={isInCart} aria-label={isInCart ? `${service.name} is already in your cart` : `Add ${service.name} to your cart`}>
+                            disabled={isInCart}
+                            aria-label={isInCart ? `${service.name} is already in your cart` : `Add ${service.name} to your cart`}>
                         {isInCart ? 'Added to cart' : 'Add to cart'}
                     </button>
-                    <button className="text-button" onClick={() => onBook(service)}>Book now <span>&rarr;</span></button>
+                    <button className="text-button" onClick={() => onBook(service)}>Book now <span>&rarr;</span>
+                    </button>
                 </div>
             </div>
         </article>
