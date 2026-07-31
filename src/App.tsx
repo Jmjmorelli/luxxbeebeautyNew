@@ -23,7 +23,12 @@ const galleryImages = [
     {src: tools, alt: 'Lash artist holding application tools'}
 ]
 
-type HomeProps = { services: Service[]; cartServiceIds: Set<string>; onAddToCart: (service: Service) => void; onBookNow: (service: Service) => void }
+type HomeProps = {
+    services: Service[];
+    cartServiceIds: Set<string>;
+    onAddToCart: (service: Service) => void;
+    onBookNow: (service: Service) => void
+}
 
 function Home({services, cartServiceIds, onAddToCart, onBookNow}: HomeProps) {
     const [activeCategory, setActiveCategory] = useState<(typeof categories)[number]>('All')
