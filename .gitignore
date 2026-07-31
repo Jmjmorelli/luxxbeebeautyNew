@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+.env
+.env.*
+!.env.example
+
+dist/
+.vite/
+*.tsbuildinfo
+
+.idea/
+.vscode/
+*.log
+.DS_Store
+Thumbs.db
