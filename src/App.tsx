@@ -9,10 +9,11 @@ import {Appointments} from './pages/Appointments'
 import {Cart} from './pages/Cart'
 import {CheckoutSuccess} from './pages/CheckoutSuccess'
 import {Home} from './pages/Home'
-import type {CartItem, Service} from './types'
+import type {CartItem, Category, Service} from './types'
 
 export default function App() {
     const [services, setServices] = useState<Service[]>([])
+    const [categories, setCategories] = useState<Category[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [cartItems, setCartItems] = useState<CartItem[]>([])
@@ -24,7 +25,10 @@ export default function App() {
     useEffect(() => {
         let cancelled = false
         fetchServices().then((data) => {
-            if (!cancelled) setServices(data)
+            if (!cancelled) {
+                setServices(data.services)
+                setCategories(data.categories)
+            }
         })
             .catch((caught) => {
                 if (!cancelled) setError(caught instanceof Error ? caught.message : 'Could not load services.')
@@ -55,7 +59,8 @@ export default function App() {
         </main> : error ?
             <main className="checkout-page"><p className="eyebrow">Error</p><h1>We couldn&apos;t load services.</h1>
                 <p>{error}</p></main> :
-            <Home services={services} cartServiceIds={cartServiceIds} onAddToCart={addToCart} onBookNow={bookNow}/>
+            <Home services={services} categories={categories} cartServiceIds={cartServiceIds} onAddToCart={addToCart}
+                         onBookNow={bookNow}/>
 
     return <><Header itemCount={itemCount}/><Routes>
         <Route path="/" element={homeElement}/><Route path="/about" element={<About/>}/>

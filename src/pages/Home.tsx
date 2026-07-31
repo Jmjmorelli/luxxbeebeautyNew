@@ -1,19 +1,19 @@
 import {useMemo, useState} from 'react'
 import {ServiceCard} from '../components/ServiceCard'
 import {galleryImages} from '../data/gallery'
-import {categories} from '../data/services'
 import frontPose from '../images/frontPose1.jpeg'
-import type {Service} from '../types'
+import type {Category, Service} from '../types'
 
 type Props = {
     services: Service[]
+    categories: Category[]
     cartServiceIds: Set<string>
     onAddToCart: (service: Service) => void
     onBookNow: (service: Service) => void
 }
 
-export function Home({services, cartServiceIds, onAddToCart, onBookNow}: Props) {
-    const [activeCategory, setActiveCategory] = useState<(typeof categories)[number]>('All')
+export function Home({services, categories, cartServiceIds, onAddToCart, onBookNow}: Props) {
+    const [activeCategory, setActiveCategory] = useState<string>('All')
     const displayServices = useMemo(
         () => activeCategory === 'All' ? services : services.filter((service) => service.category === activeCategory),
         [activeCategory, services],
@@ -35,9 +35,14 @@ export function Home({services, cartServiceIds, onAddToCart, onBookNow}: Props) 
         </section>
         <section className="services-section" id="services">
             <div className="section-heading"><h2>Services</h2>
-                <div className="category-tabs">{categories.map((category) => <button key={category}
-                                                                                     className={activeCategory === category ? 'active' : ''}
-                                                                                     onClick={() => setActiveCategory(category)}>{category}</button>)}</div>
+                <div className="category-tabs">
+                    <button key="All" className={activeCategory === 'All' ? 'active' : ''}
+                            onClick={() => setActiveCategory('All')}>All
+                    </button>
+                    {categories.map((category) => <button key={category.id}
+                                                          className={activeCategory === category.name ? 'active' : ''}
+                                                          onClick={() => setActiveCategory(category.name)}>{category.name}</button>)}
+                </div>
             </div>
             <div className="service-grid">{displayServices.map((service) => <ServiceCard key={service.id}
                                                                                          service={service}
