@@ -25,9 +25,11 @@ const stripePromise = stripeKey ? loadStripe(stripeKey) : null
 const timeSlots = ['9:00 AM', '10:30 AM', '12:00 PM', '1:30 PM', '3:00 PM', '4:30 PM']
 
 async function createCheckout(items: CartItem[], details: BookingDetails): Promise<CheckoutSession> {
-    const response = await fetch(`/api/v1/lux/checkout`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL ?? ''}/api/v1/lux/checkout`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
             items: items.map(({serviceId, quantity}) => ({serviceId, quantity})),
             appointment: details
@@ -35,8 +37,13 @@ async function createCheckout(items: CartItem[], details: BookingDetails): Promi
     })
 
     if (!response.ok) {
-        const body = await response.json().catch(() => null) as { message?: string } | null
-        throw new Error(body?.message ?? 'We could not start your secure checkout. Please try again.')
+        const body = await response.json().catch(() => null) as
+            | { message?: string; error?: string }
+            | null
+
+        throw new Error(
+            body?.error ?? body?.message ?? 'We could not start your secure checkout. Please try again.'
+        )
     }
     return response.json() as Promise<CheckoutSession>
 }
