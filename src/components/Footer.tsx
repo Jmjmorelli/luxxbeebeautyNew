@@ -1,7 +1,7 @@
 export function Footer() {
     return <footer>
         <span>LuxxBeeBeauty</span>
-        <p>Beauty, your way.</p>
+        <p>Be the Beauty.</p>
         <small>&copy; {new Date().getFullYear()} LuxxBeeBeauty</small>
     </footer>
 }
