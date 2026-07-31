@@ -3,7 +3,6 @@ import fullSet from '../images/eyelash5.jpeg'
 import lashCloseUp from '../images/eyelash1.jpeg'
 import lashDetail from '../images/eyelash2.jpeg'
 import lashSet from '../images/eyelash3.jpeg'
-import lashLift from '../images/lashlift1.jpeg'
 import tools from '../images/holdingTweezers1.jpeg'
 
 export const galleryImages = [
