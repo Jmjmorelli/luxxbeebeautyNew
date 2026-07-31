@@ -21,7 +21,7 @@ export function Home({services, categories, cartServiceIds, onAddToCart, onBookN
 
     return <main>
         <section className="hero" id="home">
-            <div className="hero__copy"><p className="eyebrow">Beauty, your way</p><h1>Feel like
+            <div className="hero__copy"><p className="eyebrow">Be The Beauty</p><h1>Feel like
                 your <em>finest</em> self.</h1>
                 <p className="hero__description">Thoughtful beauty services, personalised to how you want to feel when
                     you walk out the door.</p>

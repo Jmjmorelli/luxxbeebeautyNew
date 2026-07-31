@@ -11,7 +11,6 @@ export const galleryImages = [
     {src: lashCloseUp, alt: 'Lash extension application in progress'},
     {src: browResult, alt: 'Freshly shaped brows'},
     {src: lashDetail, alt: 'Close-up of a finished lash set'},
-    {src: lashLift, alt: 'Lash treatment being performed'},
     {src: lashSet, alt: 'Finished lashes reflected in a mirror'},
     {src: tools, alt: 'Lash artist holding application tools'},
 ]
