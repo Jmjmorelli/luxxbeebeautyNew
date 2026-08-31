@@ -76,11 +76,11 @@ function PaymentForm({bookingId, onPaymentSubmitted}: { bookingId: string; onPay
         onPaymentSubmitted()
     }
 
-    return <form className="checkout-form" onSubmit={submit}>
+    return <form className="checkout-form" onSubmit={submit} aria-busy={isSubmitting}>
         <PaymentElement options={{layout: 'tabs'}}/>
         {error && <p className="checkout-error" role="alert">{error}</p>}
         <button className="primary-button" disabled={!stripe || isSubmitting} type="submit">
-            {isSubmitting ? 'Confirming payment…' : 'Pay and confirm booking'} <span>→</span>
+            {isSubmitting ? 'Confirming payment…' : 'Pay & confirm booking'} <span>→</span>
         </button>
     </form>
 }
@@ -114,18 +114,23 @@ export function Checkout({items, onPaymentSubmitted}: Props) {
         }
     }
 
-    if (items.length === 0) return <main className="checkout-page"><h1>Your cart is empty.</h1></main>
-    if (!stripePromise) return <main className="checkout-page"><h1>Payments are not configured.</h1>
+    if (items.length === 0) return <main className="checkout-page" id="main-content"><h1>Your cart is empty.</h1></main>
+    if (!stripePromise) return <main className="checkout-page" id="main-content"><h1>Payments are not configured.</h1>
         <p>Add <code>VITE_STRIPE_PUBLISHABLE_KEY</code> to your frontend environment before opening checkout.</p></main>
-    if (session) return <main className="checkout-page"><p className="eyebrow">Secure checkout</p><h1>Confirm
-        your <em>booking</em>.</h1><p className="checkout-note">Your appointment is reserved while you complete
-        payment.</p><Elements stripe={stripePromise}
-                              options={{clientSecret: session.clientSecret, appearance: {theme: 'stripe'}}}><PaymentForm
-        bookingId={session.bookingId} onPaymentSubmitted={onPaymentSubmitted}/></Elements></main>
+    if (session) return <main className="checkout-page" id="main-content"><p className="eyebrow"></p>
+        <h1>Confirm
+            your booking.</h1><p className="checkout-note">Your appointment is reserved while you complete
+            payment.</p><Elements stripe={stripePromise}
+                                  options={{
+                                      clientSecret: session.clientSecret,
+                                      appearance: {theme: 'stripe'}
+                                  }}><PaymentForm
+            bookingId={session.bookingId} onPaymentSubmitted={onPaymentSubmitted}/></Elements></main>
 
-    return <main className="checkout-page"><p className="eyebrow">Almost there</p><h1>Booking <em>details</em>.</h1>
+    return <main className="checkout-page" id="main-content"><p className="eyebrow"></p>
+        <h1>Booking details</h1>
         <section className="checkout-summary" aria-label="Selected services">
-            <p className="eyebrow">Your services</p>
+            <p style={{fontWeight: "bold"}}>Your services</p>
             <ul>{items.map(({service}) => <li key={service.id}>
                 <span>{service.name}</span><strong>${service.price}</strong></li>)}</ul>
             <div><span>Estimated total</span><strong>${total}</strong></div>
@@ -139,8 +144,9 @@ export function Checkout({items, onPaymentSubmitted}: Props) {
                                                                             onClick={() => setTime(slot)}
                                                                             key={slot}>{slot}</button>)}</div>
             </fieldset>
-            <label>Your name<input required name="name" placeholder="Jane Smith"/></label>
-            <label>Email address<input required name="email" type="email" placeholder="jane@email.com"/></label>
+            <label>Your name<input required name="name" autoComplete="name" placeholder="Jane Smith…"/></label>
+            <label>Email address<input required name="email" type="email" autoComplete="email" spellCheck={false}
+                                       placeholder="jane@example.com…"/></label>
             {error && <p className="checkout-error" role="alert">{error}</p>}
             <button className="primary-button" disabled={isCreating}
                     type="submit">{isCreating ? 'Preparing secure checkout…' : 'Continue to payment'} <span>→</span>

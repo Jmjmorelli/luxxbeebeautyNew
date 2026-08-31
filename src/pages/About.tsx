@@ -1,7 +1,7 @@
 import sidePose from '../images/sidePose.jpeg'
 
 export function About() {
-    return <main className="about-page">
+    return <main className="about-page" id="main-content">
         <section className="about-hero">
             <div className="about-hero__copy"><p className="eyebrow">The artist behind LuxxBeeBeauty</p><h1>Hi,
                 I&apos;m <em>Erykah</em>.</h1>
@@ -11,7 +11,7 @@ export function About() {
                 <a className="primary-button" href="https://www.instagram.com/luxxbeebeauty" target="_blank"
                    rel="noreferrer">Follow on Instagram <span>&rarr;</span></a>
             </div>
-            <div className="about-hero__portrait"><img src={sidePose}
+            <div className="about-hero__portrait"><img src={sidePose} width="900" height="1200"
                                                        alt="Erykah, licensed cosmetologist and owner of LuxxBeeBeauty"/>
             </div>
         </section>

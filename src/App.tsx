@@ -69,7 +69,7 @@ export default function App() {
                                            onClear={() => setCartItems([])}/>}/>
         <Route path="/checkout"
                element={paymentSubmitted ? <CheckoutSuccess/> : <Checkout items={cartItems} onPaymentSubmitted={() => {
-                   setCartItems([]);
+                   setCartItems([]);1
                    setPaymentSubmitted(true)
                }}/>}/>
         <Route path="/checkout/success" element={<CheckoutSuccess/>}/><Route path="/appointments"

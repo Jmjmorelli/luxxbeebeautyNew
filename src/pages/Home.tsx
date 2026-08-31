@@ -19,22 +19,23 @@ export function Home({services, categories, cartServiceIds, onAddToCart, onBookN
         [activeCategory, services],
     )
 
-    return <main>
+    return <main id="main-content">
         <section className="hero" id="home">
-            <div className="hero__copy"><p className="eyebrow">Be The Beauty</p><h1>Feel like
-                your <em>finest</em> self.</h1>
-                <p className="hero__description">Thoughtful beauty services, personalised to how you want to feel when
-                    you walk out the door.</p>
+            <div className="hero__copy"><p className="eyebrow"></p><h1>Beauty that feels
+                like you</h1>
+                <p className="hero__description">Unhurried appointments and intentional details for the version of you
+                    that shows up with ease.</p>
                 <button className="primary-button"
                         onClick={() => document.querySelector('#services')?.scrollIntoView({behavior: 'smooth'})}>Explore
                     services <span>&rarr;</span></button>
             </div>
-            <div className="hero__portrait"><img src={frontPose}
-                                                 alt="LuxxBeeBeauty lash artist holding pink lash tools"/><span>Made with intention</span>
+            <div className="hero__portrait"><img src={frontPose} width="900" height="1200" fetchPriority="high"
+                                                 alt="LuxxBeeBeauty lash artist holding pink lash tools"/><span>Made for your moment</span>
             </div>
         </section>
         <section className="services-section" id="services">
-            <div className="section-heading"><h2>Services</h2>
+            <div className="section-heading">
+                <div><p className="eyebrow"></p><h2>Choose your ritual</h2></div>
                 <div className="category-tabs">
                     <button key="All" className={activeCategory === 'All' ? 'active' : ''}
                             onClick={() => setActiveCategory('All')}>All
@@ -51,8 +52,9 @@ export function Home({services, categories, cartServiceIds, onAddToCart, onBookN
                                                                                          isInCart={cartServiceIds.has(service.id)}/>)}</div>
         </section>
         <section className="gallery-section" id="gallery" aria-labelledby="gallery-heading">
-            <h2 id="gallery-heading">Gallery</h2>
+            <p className="eyebrow"></p><h2 id="gallery-heading">The details speak</h2>
             <div className="gallery-grid">{galleryImages.map(({src, alt}) => <img className="gallery-image" src={src}
+                                                                                  width="800" height="1000"
                                                                                   alt={alt} loading="lazy"
                                                                                   key={src}/>)}</div>
         </section>
