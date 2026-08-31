@@ -6,7 +6,7 @@ type Props = { items: CartItem[]; onRemove: (serviceId: string) => void; onClear
 export function Cart({items, onRemove, onClear}: Props) {
     const total = items.reduce((sum, item) => sum + item.service.price * item.quantity, 0)
     const serviceCount = items.reduce((sum, item) => sum + item.quantity, 0)
-    return <main className="cart-page" id="main-content"><p className="eyebrow">Your selection</p><h1>Your beauty <em>cart</em>.</h1>
+    return <main className="cart-page" id="main-content"><p className="eyebrow"></p><h1>Your beauty cart.</h1>
         {items.length === 0 ?
             <div className="empty-state"><span></span><h2>Your cart is empty.</h2><p>Add the services you would like to
                 book, then review them here.</p><Link className="primary-button" to="/">Explore
