@@ -42,6 +42,7 @@ export default function App() {
     }, [])
 
     function addToCart(service: Service) {
+        setPaymentSubmitted(false)
         setCartItems((current) => current.some((item) => item.serviceId === service.id) ? current : [...current, {
             serviceId: service.id,
             service,
@@ -69,7 +70,7 @@ export default function App() {
                                            onClear={() => setCartItems([])}/>}/>
         <Route path="/checkout"
                element={paymentSubmitted ? <CheckoutSuccess/> : <Checkout items={cartItems} onPaymentSubmitted={() => {
-                   setCartItems([]);1
+                   setCartItems([])
                    setPaymentSubmitted(true)
                }}/>}/>
         <Route path="/checkout/success" element={<CheckoutSuccess/>}/><Route path="/appointments"
