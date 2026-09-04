@@ -84,7 +84,7 @@ export function Checkout({items, onPaymentSubmitted}: Props) {
 
     if (items.length === 0) return <main className="checkout-page" id="main-content"><h1>Your cart is empty.</h1></main>
     if (!stripePromise) return <main className="checkout-page" id="main-content"><h1>Payments are not configured.</h1><p>Add <code>VITE_STRIPE_PUBLISHABLE_KEY</code> before opening checkout.</p></main>
-    if (session) return <main className="checkout-page" id="main-content"><p className="eyebrow">Deposit</p><h1>Confirm your booking.</h1><p className="checkout-note">Your selected time is temporarily reserved while you complete the $20 deposit.</p><Elements stripe={stripePromise} options={{clientSecret: session.clientSecret, appearance: {theme: 'stripe'}}}><PaymentForm bookingId={session.bookingId} onPaymentSubmitted={onPaymentSubmitted}/></Elements></main>
+    if (session) return <main className="checkout-page" id="main-content"><p className="eyebrow"></p><h1>Confirm your booking.</h1><p className="checkout-note">Your selected time is temporarily reserved while you complete the $20 deposit.</p><Elements stripe={stripePromise} options={{clientSecret: session.clientSecret, appearance: {theme: 'stripe'}}}><PaymentForm bookingId={session.bookingId} onPaymentSubmitted={onPaymentSubmitted}/></Elements></main>
     return <main className="checkout-page" id="main-content"><h1>Booking details</h1>
         <section className="checkout-summary" aria-label="Selected services"><p style={{fontWeight: 'bold'}}>Your services</p>
             <ul>{items.map(({service, quantity}) => <li key={service.id}><span>{service.name}{quantity > 1 ? ` × ${quantity}` : ''}</span><strong>${service.price * quantity}</strong></li>)}</ul>
