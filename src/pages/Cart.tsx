@@ -21,7 +21,7 @@ export function Cart({items, onRemove, onClear}: Props) {
                         <button className="text-button cart-item__remove" onClick={() => onRemove(serviceId)}>Remove
                         </button>
                     </article>)}</section>
-                <aside className="cart-summary"><p className="eyebrow">Summary</p>
+                <aside className="cart-summary"><p style={{fontWeight: "bold"}}>Summary</p>
                     <p>{serviceCount} {serviceCount === 1 ? 'service' : 'services'}</p>
                     <div><strong>Estimated total</strong><strong>${total}</strong></div>
                     <p className="cart-summary__note">Your details and preferred appointment time will be collected at
