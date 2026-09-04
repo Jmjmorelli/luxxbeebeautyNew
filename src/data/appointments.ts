@@ -1,7 +1,7 @@
 import type {CartItem} from '../types'
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? 'https://server.morellijoseph.com'
-const TIMEZONE = 'America/New_York'
+const TIMEZONE = 'America/Los_Angeles'
 
 type AvailabilityResponse = boolean | { available?: boolean; isAvailable?: boolean; data?: { available?: boolean; isAvailable?: boolean } }
 
