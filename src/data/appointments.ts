@@ -1,9 +1,13 @@
 import type {CartItem} from '../types'
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? 'https://server.morellijoseph.com'
-const TIMEZONE = 'America/Los_Angeles'
+const TIMEZONE = 'America/New_York'
 
-type AvailabilityResponse = boolean | { available?: boolean; isAvailable?: boolean; data?: { available?: boolean; isAvailable?: boolean } }
+type AvailabilityResponse = boolean | {
+    available?: boolean;
+    isAvailable?: boolean;
+    data?: { available?: boolean; isAvailable?: boolean }
+}
 
 function apiUrl(path: string): URL {
     return new URL(path, API_BASE_URL.endsWith('/') ? API_BASE_URL : `${API_BASE_URL}/`)
@@ -20,7 +24,15 @@ export function zonedDateTimeToIso(date: string, time: string, timeZone = TIMEZO
     const [hours, minutes] = time.split(':').map(Number)
     const targetUtc = Date.UTC(year, month - 1, day, hours, minutes)
     let timestamp = targetUtc
-    const formatter = new Intl.DateTimeFormat('en-US', {timeZone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'})
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hourCycle: 'h23'
+    })
     for (let index = 0; index < 2; index++) {
         const parts = Object.fromEntries(formatter.formatToParts(new Date(timestamp)).filter((part) => part.type !== 'literal').map((part) => [part.type, part.value]))
         const displayedUtc = Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day), Number(parts.hour), Number(parts.minute))
@@ -39,12 +51,29 @@ export async function isAppointmentAvailable(startsAt: string, durationMinutes: 
     return availabilityValue(await response.json() as AvailabilityResponse)
 }
 
-export async function createAppointment({items, name, email, phone, startsAt}: {items: CartItem[]; name: string; email: string; phone: string; startsAt: string}): Promise<{bookingId: string; clientSecret: string}> {
+export async function createAppointment({items, name, email, phone, startsAt}: {
+    items: CartItem[];
+    name: string;
+    email: string;
+    phone: string;
+    startsAt: string
+}): Promise<{ bookingId: string; clientSecret: string }> {
     const response = await fetch(apiUrl('/api/v1/lux/appointments'), {
         method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({customer: {name, email, phone}, startsAt, timezone: TIMEZONE, services: items.map(({serviceId, quantity}) => ({serviceId, quantity}))}),
+        body: JSON.stringify({
+            customer: {name, email, phone},
+            startsAt,
+            timezone: TIMEZONE,
+            services: items.map(({serviceId, quantity}) => ({serviceId, quantity}))
+        }),
     })
-    const body = await response.json().catch(() => null) as {message?: string; error?: string; clientSecret?: string; id?: string; appointment?: {id?: string}} | null
+    const body = await response.json().catch(() => null) as {
+        message?: string;
+        error?: string;
+        clientSecret?: string;
+        id?: string;
+        appointment?: { id?: string }
+    } | null
     if (response.ok) {
         const bookingId = body?.id ?? body?.appointment?.id
         if (body?.clientSecret && bookingId) return {bookingId, clientSecret: body.clientSecret}
