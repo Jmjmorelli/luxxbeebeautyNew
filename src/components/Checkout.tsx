@@ -9,6 +9,16 @@ type Props = { items: CartItem[]; onPaymentSubmitted: () => void }
 const timeSlots = [['09:00', '9:00 AM'], ['10:30', '10:30 AM'], ['12:00', '12:00 PM'], ['13:30', '1:30 PM'], ['15:00', '3:00 PM'], ['16:30', '4:30 PM']] as const
 const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined
 const stripePromise = stripeKey ? loadStripe(stripeKey) : null
+const blockedBookingWeekdays = new Set(
+    ((import.meta.env.VITE_BLOCKED_BOOKING_WEEKDAYS as string | undefined) ?? '')
+        .split(',')
+        .map((day) => Number(day.trim()))
+        .filter((day) => Number.isInteger(day) && day >= 0 && day <= 6),
+)
+
+function isBlockedBookingDate(date: string): boolean {
+    return blockedBookingWeekdays.has(new Date(`${date}T00:00:00`).getDay())
+}
 
 function PaymentForm({bookingId, onPaymentSubmitted}: {bookingId: string; onPaymentSubmitted: () => void}) {
     const stripe = useStripe()
@@ -60,6 +70,11 @@ export function Checkout({items, onPaymentSubmitted}: Props) {
         setTime(null)
         setError(null)
         setIsLoadingTimes(true)
+        if (isBlockedBookingDate(date)) {
+            setAvailableTimes([])
+            setIsLoadingTimes(false)
+            return () => { cancelled = true }
+        }
         Promise.all(timeSlots.map(async ([value]) => ({value, available: await isAppointmentAvailable(zonedDateTimeToIso(date, value), durationMinutes)})))
             .then((results) => { if (!cancelled) setAvailableTimes(results.filter((result) => result.available).map((result) => result.value)) })
             .catch((caught) => { if (!cancelled) setError(caught instanceof Error ? caught.message : 'We could not check availability.') })
@@ -69,6 +84,7 @@ export function Checkout({items, onPaymentSubmitted}: Props) {
 
     async function submit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
+        if (isBlockedBookingDate(date)) return setError('Bookings are temporarily unavailable on this day. Please choose another date.')
         if (!time) return setError('Please choose an available appointment time.')
         setIsSubmitting(true)
         setError(null)
