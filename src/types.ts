@@ -11,24 +11,24 @@ export type Service = {
 export type Category = {
     id: number
     name: string
-    created_at: string
+    createdAt: string
 }
 
 export type ApiCategory = {
     id: number
     name: string
-    created_at: string
+    createdAt: string
 }
 
 export type ApiService = {
     id: string
-    category_id: number
+    categoryId: number
     name: string
     price: number
     description: string
-    duration_minutes: number
-    is_active: boolean
-    created_at: string
+    durationMinutes: number
+    isActive: boolean
+    createdAt: string
 }
 
 export type CartItem = {

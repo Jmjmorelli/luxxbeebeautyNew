@@ -39,7 +39,7 @@ function mapCategoryApiService(apiCategory: ApiCategory): Category {
     return {
         id: apiCategory.id,
         name: apiCategory.name,
-        created_at: apiCategory.created_at,
+        createdAt: apiCategory.createdAt,
     }
 }
 
@@ -48,13 +48,13 @@ function mapApiService(
     categoryById: Record<number, string>,
     categoryAccentByName: Record<string, string>,
 ): Service {
-    const category = categoryById[apiService.category_id] ?? 'Other'
+    const category = categoryById[apiService.categoryId] ?? 'Other'
     return {
         id: apiService.id,
         name: apiService.name,
         category,
         description: apiService.description,
-        duration: apiService.duration_minutes,
+        duration: apiService.durationMinutes,
         price: apiService.price,
         accent: categoryAccentByName[category] ?? 'rose',
     }
@@ -70,7 +70,7 @@ export async function fetchServices(): Promise<{ services: Service[]; categories
     const categoryById = Object.fromEntries(categories.map((c) => [c.id, c.name]))
     const categoryAccentByName = assignCategoryAccents(categories)
     const services = data.services
-        .filter((service) => service.is_active)
+        .filter((service) => service.isActive)
         .map((service) => mapApiService(service, categoryById, categoryAccentByName))
     return {services, categories}
 }
