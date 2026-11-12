@@ -28,7 +28,7 @@ jobs:
             node --version
             cd "$HOME/frontends/luxxbeebeautyNew"
             git fetch
-            git pull origin main
+            git pull origin master
             npm install
             npm run build
             if pm2 describe luxxBeeBeauty > /dev/null 2>&1; then
