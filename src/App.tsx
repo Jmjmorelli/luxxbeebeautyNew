@@ -8,6 +8,7 @@ import {About} from './pages/About'
 import {Appointments} from './pages/Appointments'
 import {Cart} from './pages/Cart'
 import {CheckoutSuccess} from './pages/CheckoutSuccess'
+import {CheckoutCancelled} from './pages/CheckoutCancelled'
 import {Home} from './pages/Home'
 import type {CartItem, Category, Service} from './types'
 
@@ -17,7 +18,6 @@ export default function App() {
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [cartItems, setCartItems] = useState<CartItem[]>([])
-    const [paymentSubmitted, setPaymentSubmitted] = useState(false)
     const navigate = useNavigate()
     const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
     const cartServiceIds = useMemo(() => new Set(cartItems.map((item) => item.serviceId)), [cartItems])
@@ -42,7 +42,6 @@ export default function App() {
     }, [])
 
     function addToCart(service: Service) {
-        setPaymentSubmitted(false)
         setCartItems((current) => current.some((item) => item.serviceId === service.id) ? current : [...current, {
             serviceId: service.id,
             service,
@@ -68,12 +67,8 @@ export default function App() {
         <Route path="/cart" element={<Cart items={cartItems}
                                            onRemove={(serviceId) => setCartItems((current) => current.filter((item) => item.serviceId !== serviceId))}
                                            onClear={() => setCartItems([])}/>}/>
-        <Route path="/checkout"
-               element={paymentSubmitted ? <CheckoutSuccess/> : <Checkout items={cartItems} onPaymentSubmitted={() => {
-                   setCartItems([])
-                   setPaymentSubmitted(true)
-               }}/>}/>
-        <Route path="/checkout/success" element={<CheckoutSuccess/>}/><Route path="/appointments"
+        <Route path="/checkout" element={<Checkout items={cartItems}/>}/>
+        <Route path="/checkout/success" element={<CheckoutSuccess/>}/><Route path="/checkout/cancelled" element={<CheckoutCancelled/>}/><Route path="/appointments"
                                                                              element={<Appointments/>}/><Route path="*"
                                                                                                                element={homeElement}/>
     </Routes><Footer/></>

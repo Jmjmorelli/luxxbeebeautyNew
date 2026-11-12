@@ -47,14 +47,14 @@ export async function isAppointmentAvailable(startsAt: string, durationMinutes: 
     return availabilityValue(await response.json() as AvailabilityResponse)
 }
 
-export async function createAppointment({items, name, email, phone, startsAt}: {
+export async function startCheckout({items, name, email, phone, startsAt}: {
     items: CartItem[];
     name: string;
     email: string;
     phone: string;
     startsAt: string
-}): Promise<{ bookingId: string; clientSecret: string }> {
-    const response = await fetch(apiUrl('/api/v1/lux/appointments'), {
+}): Promise<{ checkoutUrl: string }> {
+    const response = await fetch(apiUrl('/api/v1/lux/checkout'), {
         method: 'POST', headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             customer: {name, email, phone},
@@ -66,14 +66,11 @@ export async function createAppointment({items, name, email, phone, startsAt}: {
     const body = await response.json().catch(() => null) as {
         message?: string;
         error?: string;
-        clientSecret?: string;
-        id?: string;
-        appointment?: { id?: string }
+        checkoutUrl?: string;
     } | null
     if (response.ok) {
-        const bookingId = body?.id ?? body?.appointment?.id
-        if (body?.clientSecret && bookingId) return {bookingId, clientSecret: body.clientSecret}
-        throw new Error('The appointment was created, but payment could not be initialized. Please contact us before trying again.')
+        if (body?.checkoutUrl) return {checkoutUrl: body.checkoutUrl}
+        throw new Error('The appointment was created, but checkout could not be initialized. Please contact us before trying again.')
     }
     throw new Error(body?.error ?? body?.message ?? 'We could not create your appointment. Please try again.')
 }
