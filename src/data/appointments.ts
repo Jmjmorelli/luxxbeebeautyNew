@@ -1,16 +1,12 @@
 import type {CartItem} from '../types'
+import {apiUrl} from './api'
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? 'https://server.morellijoseph.com'
 const TIMEZONE = 'America/New_York'
 
 type AvailabilityResponse = boolean | {
     available?: boolean;
     isAvailable?: boolean;
     data?: { available?: boolean; isAvailable?: boolean }
-}
-
-function apiUrl(path: string): URL {
-    return new URL(path, API_BASE_URL.endsWith('/') ? API_BASE_URL : `${API_BASE_URL}/`)
 }
 
 function availabilityValue(response: AvailabilityResponse): boolean {

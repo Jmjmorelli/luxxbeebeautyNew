@@ -1,0 +1,39 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update and build on VPS
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+            export NVM_DIR="$HOME/.nvm"
+            if [ ! -s "$NVM_DIR/nvm.sh" ]; then
+              echo "nvm is required on the VPS to use Node.js 20."
+              exit 1
+            fi
+            . "$NVM_DIR/nvm.sh"
+            nvm install 20
+            nvm use 20
+            node --version
+            cd "$HOME/frontends/luxxbeebeautyNew"
+            git fetch
+            git pull origin main
+            npm install
+            npm run build
+            if pm2 describe luxxBeeBeauty > /dev/null 2>&1; then
+              pm2 restart luxxBeeBeauty
+            else
+              pm2 start npm --name luxxBeeBeauty -- run start
+              pm2 save
+            f
