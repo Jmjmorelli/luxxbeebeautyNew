@@ -5,7 +5,7 @@ export default defineConfig({
   preview: {
     allowedHosts: [
       'luxxbeebeauty.com',
-      'www.luxxbeebeauty.com' // Recomendado incluir também com www
+      'www.luxxbeebeauty.com'
     ]
   }
 })
