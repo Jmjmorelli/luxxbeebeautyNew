@@ -1,19 +1,22 @@
 import {useEffect, useState} from 'react'
-import {Link} from 'react-router-dom'
+import {Link, useSearchParams} from 'react-router-dom'
 import {getBookingConfirmation, type BookingConfirmation} from '../data/appointments'
 
 const confirmationTokenKey = 'luxBookingConfirmationToken'
 
 export function CheckoutSuccess() {
+    const [searchParams] = useSearchParams()
+    const confirmationTokenFromQuery = searchParams.get('confirmation')
     const [booking, setBooking] = useState<BookingConfirmation | null>(null)
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
-        const confirmationToken = sessionStorage.getItem(confirmationTokenKey)
+        const confirmationToken = confirmationTokenFromQuery ?? sessionStorage.getItem(confirmationTokenKey)
         if (!confirmationToken) {
             setError('We could not find this booking confirmation. Please contact us if your deposit was charged.')
             return
         }
+        sessionStorage.setItem(confirmationTokenKey, confirmationToken)
 
         let cancelled = false
         let timer: number | undefined
@@ -35,7 +38,7 @@ export function CheckoutSuccess() {
             cancelled = true
             if (timer !== undefined) window.clearTimeout(timer)
         }
-    }, [])
+    }, [confirmationTokenFromQuery])
 
     const isConfirmed = booking?.paymentStatus === 'paid'
     const isPending = booking?.paymentStatus === 'requires_payment'
