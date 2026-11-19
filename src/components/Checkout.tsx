@@ -62,7 +62,8 @@ export function Checkout({items}: Props) {
         setError(null)
         const form = new FormData(event.currentTarget)
         try {
-            const {checkoutUrl} = await startCheckout({items, name: String(form.get('name')), email: String(form.get('email')), phone: String(form.get('phone')), startsAt: zonedDateTimeToIso(date, time)})
+            const {checkoutUrl, confirmationToken} = await startCheckout({items, name: String(form.get('name')), email: String(form.get('email')), phone: String(form.get('phone')), startsAt: zonedDateTimeToIso(date, time)})
+            sessionStorage.setItem('luxBookingConfirmationToken', confirmationToken)
             window.location.assign(checkoutUrl)
         } catch (caught) {
             setError(caught instanceof Error ? caught.message : 'We could not start checkout.')

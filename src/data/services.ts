@@ -1,7 +1,7 @@
 import type {ApiService, Service, Category, ApiCategory} from '../types'
 import {apiUrl} from './api'
 
-const API_URL = import.meta.env.VITE_SERVICES_API_URL ?? apiUrl('/api/v1/lux/services')
+const API_URL = import.meta.env.VITE_SERVICES_API_URL ?? apiUrl('/api/v2/lux/services')
 
 const THEME_ACCENTS = ['rose', 'plum', 'honey', 'lavender', 'sage', 'sky'] as const
 
