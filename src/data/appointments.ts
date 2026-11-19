@@ -3,17 +3,6 @@ import {apiUrl} from './api'
 
 const TIMEZONE = 'America/New_York'
 
-type AvailabilityResponse = boolean | {
-    available?: boolean;
-    isAvailable?: boolean;
-    data?: { available?: boolean; isAvailable?: boolean }
-}
-
-function availabilityValue(response: AvailabilityResponse): boolean {
-    if (typeof response === 'boolean') return response
-    return response.available ?? response.isAvailable ?? response.data?.available ?? response.data?.isAvailable ?? false
-}
-
 /** Converts the date and clock time selected in the studio's timezone to an ISO instant. */
 export function zonedDateTimeToIso(date: string, time: string, timeZone = TIMEZONE): string {
     const [year, month, day] = date.split('-').map(Number)
@@ -37,16 +26,6 @@ export function zonedDateTimeToIso(date: string, time: string, timeZone = TIMEZO
     return new Date(timestamp).toISOString()
 }
 
-export async function isAppointmentAvailable(startsAt: string, durationMinutes: number): Promise<boolean> {
-    const endsAt = new Date(new Date(startsAt).getTime() + durationMinutes * 60_000).toISOString()
-    const url = apiUrl('/api/v2/lux/availability')
-    url.searchParams.set('startsAt', startsAt)
-    url.searchParams.set('endsAt', endsAt)
-    const response = await fetch(url)
-    if (!response.ok) throw new Error('We could not check availability. Please try again.')
-    return availabilityValue(await response.json() as AvailabilityResponse)
-}
-
 export async function startCheckout({items, name, email, phone, startsAt}: {
     items: CartItem[];
     name: string;
@@ -54,7 +33,7 @@ export async function startCheckout({items, name, email, phone, startsAt}: {
     phone: string;
     startsAt: string
 }): Promise<{ checkoutUrl: string; confirmationToken: string }> {
-    const response = await fetch(apiUrl('/api/v2/lux/bookings/checkout'), {
+    const response = await fetch(apiUrl('/api/v3/lux/bookings/checkout'), {
         method: 'POST', headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             customer: {name, email, phone},
@@ -88,7 +67,7 @@ export type BookingConfirmation = {
 }
 
 export async function getBookingConfirmation(confirmationToken: string): Promise<BookingConfirmation> {
-    const response = await fetch(apiUrl(`/api/v2/lux/bookings/confirmations/${encodeURIComponent(confirmationToken)}`))
+    const response = await fetch(apiUrl(`/api/v3/lux/bookings/confirmations/${encodeURIComponent(confirmationToken)}`))
     if (!response.ok) throw new Error('We could not confirm your booking yet. Please refresh in a moment.')
     return response.json() as Promise<BookingConfirmation>
 }
