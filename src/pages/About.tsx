@@ -20,6 +20,7 @@ export function About() {
                                                         rel="noreferrer">@luxxbeebeauty</a></div>
             <div><p className="eyebrow">Website</p><a href="https://luxxbeebeauty.com" target="_blank"
                                                       rel="noreferrer">luxxbeebeauty.com</a></div>
+            <div><p className="eyebrow">Phone</p><a href="tel:+17072909794">(707) 290-9794</a></div>
             <div><p className="eyebrow">Visit the studio</p>
                 <address>1930 Pennsylvania Ave, Ste B</address>
             </div>
